@@ -1,10 +1,13 @@
 package arnnus.importationapi.resource;
 
+import arnnus.importationapi.config.UserAuthenticationProvider;
 import arnnus.importationapi.domain.Importateur;
 import arnnus.importationapi.service.ImportateurService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +34,7 @@ public class ImportateurResource {
 
     @GetMapping
     public ResponseEntity<Page<Importateur>> getImportateurs(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                @RequestParam(value = "size", defaultValue = "10") int size){
+                                                             @RequestParam(value = "size", defaultValue = "10") int size){
         return ResponseEntity.ok().body(importateurService.getAllImportateurs(page, size));
     }
 
