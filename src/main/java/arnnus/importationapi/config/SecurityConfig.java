@@ -36,6 +36,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/importateurs" ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/importateurs/{id}").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/importateurs/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/upload").permitAll()
+                        .anyRequest().authenticated()
                 )
                         //.anyRequest().authenticated())
         ;

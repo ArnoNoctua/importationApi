@@ -1,4 +1,4 @@
-package arnnus.importationapi.controllers;
+package arnnus.importationapi.resource;
 
 import jakarta.validation.Valid;
 import arnnus.importationapi.config.UserAuthenticationProvider;
@@ -16,7 +16,7 @@ import java.net.URI;
 
 @RequiredArgsConstructor
 @RestController
-public class AuthController {
+public class AuthResource {
 
     private final UserService userService;
     private final UserAuthenticationProvider userAuthenticationProvider;
