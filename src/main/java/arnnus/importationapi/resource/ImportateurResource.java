@@ -2,8 +2,13 @@ package arnnus.importationapi.resource;
 
 import arnnus.importationapi.config.UserAuthenticationProvider;
 import arnnus.importationapi.domain.Importateur;
+import arnnus.importationapi.domain.VinList;
+import arnnus.importationapi.repo.VinRepo;
+import arnnus.importationapi.service.CsvService;
 import arnnus.importationapi.service.ImportateurService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +20,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
 import static arnnus.importationapi.constant.Constant.PHOTO_DIRECTORY;
 import static org.springframework.util.MimeTypeUtils.IMAGE_JPEG_VALUE;
@@ -23,9 +30,14 @@ import static org.springframework.util.MimeTypeUtils.IMAGE_PNG_VALUE;
 @RestController
 @RequestMapping("/importateurs")
 @RequiredArgsConstructor
+@Slf4j
 //RestAPI ressource est controlleur
 public class ImportateurResource {
     private final ImportateurService importateurService;
+    @Autowired
+    private CsvService csvService;
+    @Autowired
+    private VinRepo vinListRepo;
 
     @PostMapping
     public ResponseEntity<Importateur> createImportateur(@RequestBody Importateur importateur){
@@ -56,6 +68,28 @@ public class ImportateurResource {
     public ResponseEntity<Void> deleteImportateur(@PathVariable(value = "id") String id) {
         importateurService.deleteImportateur(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/csv-upload")
+    public ResponseEntity<?> uploadCSV(@RequestParam("file") MultipartFile file, @RequestParam("id") String importateurId) {
+        try {
+            // Call service method to parse CSV file
+            List<Map<String, String>> parsedData = csvService.parseCSV(file);
+            // Save parsed data to database
+            csvService.saveParsedDataToDatabase(importateurId, parsedData);
+            // You can return the parsed data as ResponseEntity
+            return ResponseEntity.ok(parsedData);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload CSV file: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}/vin-list")
+    public ResponseEntity<List<VinList>> getVinListForImportateur(@PathVariable String id) {
+        List<VinList> vinList = importateurService.getVinListForImportateur(id);
+        ResponseEntity<List<VinList>> responseEntity = ResponseEntity.ok(vinList);
+        log.info("ResponseEntity for Importateur {}: {}", id, responseEntity);
+        return responseEntity;
     }
 
 }

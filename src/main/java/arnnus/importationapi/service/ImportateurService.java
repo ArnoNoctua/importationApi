@@ -1,7 +1,9 @@
 package arnnus.importationapi.service;
 
 import arnnus.importationapi.domain.Importateur;
+import arnnus.importationapi.domain.VinList;
 import arnnus.importationapi.repo.ImportateurRepo;
+import arnnus.importationapi.repo.VinRepo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -28,6 +31,13 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 @RequiredArgsConstructor
 public class ImportateurService {
     private final ImportateurRepo importateurRepo; //Injection de dépendances
+    private final VinRepo vinListRepo;
+
+    public List<VinList> getVinListForImportateur(String id) {
+        List<VinList> vinList = vinListRepo.findAllByImportateurId(id);
+        log.info("Fetched VinList for Importateur {}: {}", id, vinList);
+        return vinList;
+    }
 
     public Page<Importateur> getAllImportateurs(int page, int size){
         return importateurRepo.findAll(PageRequest.of(page, size, Sort.by("name")));
