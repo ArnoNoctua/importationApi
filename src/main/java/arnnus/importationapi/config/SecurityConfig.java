@@ -31,8 +31,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/importateurs").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/importateurs/photo").permitAll() // Permit access to PUT /importateurs/photo
-                        .requestMatchers(HttpMethod.GET, "/importateurs/image/**").permitAll() // Permit access to all GET requests under /importateurs/image
+                        .requestMatchers(HttpMethod.PUT, "/importateurs/photo").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/importateurs/image/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/importateurs" ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/importateurs/{id}").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/importateurs/{id}").permitAll()

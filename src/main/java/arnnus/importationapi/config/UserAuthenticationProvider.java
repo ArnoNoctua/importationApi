@@ -29,13 +29,13 @@ public class UserAuthenticationProvider {
 
     @PostConstruct
     protected void init() {
-        // this is to avoid having the raw secret key available in the JVM
+        // Pour empecher raw secret key dans le JVM
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
     public String createToken(String login) {
         Date now = new Date();
-        Date validity = new Date(now.getTime() + 3600000); // 1 hour
+        Date validity = new Date(now.getTime() + 3600000); // 1 heure
 
         return JWT.create()
                 .withIssuer(login)

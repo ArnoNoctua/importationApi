@@ -70,21 +70,6 @@ public class ImportateurResource {
         importateurService.deleteImportateur(id);
         return ResponseEntity.noContent().build();
     }
-
-    @PostMapping("/csv-upload")
-    public ResponseEntity<?> uploadCSV(@RequestParam("file") MultipartFile file, @RequestParam("id") String importateurId) {
-        try {
-            // Call service method to parse CSV file
-            List<Map<String, String>> parsedData = csvService.parseCSV(file);
-            // Save parsed data to database
-            csvService.saveParsedDataToDatabase(importateurId, parsedData);
-            // You can return the parsed data as ResponseEntity
-            return ResponseEntity.ok(parsedData);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload CSV file: " + e.getMessage());
-        }
-    }
-
     @GetMapping("/{id}/vin-list")
     public ResponseEntity<List<VinListDto>> getVinListForImportateur(@PathVariable String id) {
         List<VinListDto> vinListDto = importateurService.getVinListForImportateur(id);

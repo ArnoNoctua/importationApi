@@ -1,8 +1,11 @@
 package arnnus.importationapi.tests;
 
 import arnnus.importationapi.domain.Importateur;
+import arnnus.importationapi.domain.VinList;
 import arnnus.importationapi.repo.ImportateurRepo;
+import arnnus.importationapi.repo.VinRepo;
 import arnnus.importationapi.service.ImportateurService;
+import dtos.VinListDto;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.domain.Page;
@@ -10,6 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +27,8 @@ public class ImportateurServiceTest {
     @Test
     void testGetAllImportateurs() {
         ImportateurRepo importateurRepoMock = mock(ImportateurRepo.class);
-        ImportateurService importateurService = new ImportateurService(importateurRepoMock);
+        VinRepo vinRepoMock = mock(VinRepo.class); // Create a mock VinRepo
+        ImportateurService importateurService = new ImportateurService(importateurRepoMock, vinRepoMock); // Pass the mock VinRepo to the constructor
 
         Page<Importateur> page = new PageImpl<>(Collections.singletonList(new Importateur()));
         when(importateurRepoMock.findAll(any(PageRequest.class))).thenReturn(page);
@@ -32,58 +37,57 @@ public class ImportateurServiceTest {
     }
 
     @Test
-    void testGetImportateur() {
-        // Mocking data
+    void testGetVinListForImportateur() {
+        // Mock
         String importateurId = "1";
-        Importateur sampleImportateur = new Importateur();
-        sampleImportateur.setId(importateurId);
-        sampleImportateur.setName("Sample Importateur");
+        VinList sampleVinList = new VinList();
+        sampleVinList.setImportateurId(importateurId);
+        List<VinList> vinList = Collections.singletonList(sampleVinList);
 
-        // Mocking behavior
+        // Mock
+        VinRepo vinListRepoMock = mock(VinRepo.class);
         ImportateurRepo importateurRepoMock = mock(ImportateurRepo.class);
-        ImportateurService importateurService = new ImportateurService(importateurRepoMock);
-        when(importateurRepoMock.findById(importateurId)).thenReturn(Optional.of(sampleImportateur));
+        ImportateurService importateurService = new ImportateurService(importateurRepoMock, vinListRepoMock);
+        when(vinListRepoMock.findAllByImportateurId(importateurId)).thenReturn(vinList);
 
-        // Invoking the method
-        Importateur result = importateurService.getImportateur(importateurId);
+        List<VinListDto> result = importateurService.getVinListForImportateur(importateurId);
 
-        // Assertions
-        assertEquals(sampleImportateur, result);
+        // Assert
+        assertEquals(vinList.size(), result.size());
+        assertEquals(vinList.get(0).getImportateurId(), result.get(0).getImportateurId());
     }
 
     @Test
     void testCreateImportateur() {
-        // Mocking data
+        // Mock
         Importateur importateurToCreate = new Importateur();
         importateurToCreate.setId("1");
         importateurToCreate.setName("Sample Importateur");
+        VinRepo vinRepoMock = mock(VinRepo.class);
 
-        // Mocking behavior
+        // Mock
         ImportateurRepo importateurRepoMock = mock(ImportateurRepo.class);
-        ImportateurService importateurService = new ImportateurService(importateurRepoMock);
+        ImportateurService importateurService = new ImportateurService(importateurRepoMock, vinRepoMock);
         when(importateurRepoMock.save(importateurToCreate)).thenReturn(importateurToCreate);
 
-        // Invoking the method
         Importateur result = importateurService.createImportateur(importateurToCreate);
 
-        // Assertions
+        // Assert
         assertEquals(importateurToCreate, result);
     }
 
     @Test
     void testDeleteImportateur() {
-        // Mocking data
+        // Mock
         String importateurId = "1";
-
-        // Mocking behavior
         ImportateurRepo importateurRepoMock = mock(ImportateurRepo.class);
-        ImportateurService importateurService = new ImportateurService(importateurRepoMock);
+        VinRepo vinRepoMock = mock(VinRepo.class);
+        ImportateurService importateurService = new ImportateurService(importateurRepoMock, vinRepoMock);
         when(importateurRepoMock.findById(importateurId)).thenReturn(Optional.empty());
 
-        // Invoking the method
         assertThrows(RuntimeException.class, () -> importateurService.deleteImportateur(importateurId));
 
-        // Verifying behavior
+        // Verify
         Mockito.verify(importateurRepoMock, Mockito.never()).deleteById(importateurId);
     }
 }

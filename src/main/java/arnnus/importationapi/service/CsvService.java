@@ -36,7 +36,7 @@ public class CsvService {
         List<Map<String, String>> data = new ArrayList<>();
         CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
         try (CSVReader reader = new CSVReaderBuilder(new InputStreamReader(file.getInputStream())).withCSVParser(parser).build()) {
-            String[] headers = reader.readNext(); // Assuming first row contains headers
+            String[] headers = reader.readNext();
             String[] line;
             while ((line = reader.readNext()) != null) {
                 Map<String, String> row = new HashMap<>();
@@ -47,10 +47,9 @@ public class CsvService {
             }
         }
 
-        // Log the parsed data
+        // Log
         logger.info("Parsed CSV data: {}", data);
 
-        // Check if the data is correctly parsed
         for (Map<String, String> row : data) {
             if (!(row.containsKey("Nom") && row.containsKey("Millesime") && row.containsKey("Pays") && row.containsKey("Region") && row.containsKey("Prix") && row.containsKey("Quantite"))) {
                 logger.error("CSV file not correctly parsed: {}", row);
@@ -65,7 +64,6 @@ public class CsvService {
         List<VinList> vinList = new ArrayList<>();
 
         for (Map<String, String> row : parsedData) {
-            logger.info("Row data: {}", row); // Log the row data
 
             VinList vin = new VinList();
             vin.setImportateurId(importateurId);
@@ -106,15 +104,11 @@ public class CsvService {
             vinList.add(vin);
         }
 
-        logger.info("VinList before save: {}", vinList); // Log the VinList before the save operation
-
         try {
             vinRepo.saveAll(vinList);
         } catch (Exception e) {
-            logger.error("Error occurred during save operation", e); // Log any exceptions that occur during the save operation
+            logger.error("Error occurred during save operation", e);
         }
-
-        logger.info("VinList after save: {}", vinList); // Log the VinList after the save operation
     }
 }
 
