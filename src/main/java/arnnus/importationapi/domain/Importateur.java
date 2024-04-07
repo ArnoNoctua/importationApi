@@ -1,7 +1,9 @@
 package arnnus.importationapi.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,5 +37,6 @@ public class Importateur {
     private String photoURL;
 
     @OneToMany(mappedBy = "importateur", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<VinList> vinList;
 }

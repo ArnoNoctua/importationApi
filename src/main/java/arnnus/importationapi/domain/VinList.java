@@ -1,10 +1,14 @@
 package arnnus.importationapi.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
+@Getter
 @Entity
 @Table(name = "vin_list")
 @Setter
@@ -36,6 +40,7 @@ public class VinList {
 
         @ManyToOne
         @JoinColumn(name = "importateur_id")
+        @JsonBackReference
         private Importateur importateur;
 
         @Override

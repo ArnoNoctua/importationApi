@@ -6,6 +6,7 @@ import arnnus.importationapi.domain.VinList;
 import arnnus.importationapi.repo.VinRepo;
 import arnnus.importationapi.service.CsvService;
 import arnnus.importationapi.service.ImportateurService;
+import dtos.VinListDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,9 +86,9 @@ public class ImportateurResource {
     }
 
     @GetMapping("/{id}/vin-list")
-    public ResponseEntity<List<VinList>> getVinListForImportateur(@PathVariable String id) {
-        List<VinList> vinList = importateurService.getVinListForImportateur(id);
-        ResponseEntity<List<VinList>> responseEntity = ResponseEntity.ok(vinList);
+    public ResponseEntity<List<VinListDto>> getVinListForImportateur(@PathVariable String id) {
+        List<VinListDto> vinListDto = importateurService.getVinListForImportateur(id);
+        ResponseEntity<List<VinListDto>> responseEntity = ResponseEntity.ok(vinListDto);
         log.info("ResponseEntity for Importateur {}: {}", id, responseEntity);
         return responseEntity;
     }

@@ -99,8 +99,8 @@ public class CsvService {
             }
 
             String quantite = row.get("Quantite");
-            if (quantite != null) {
-                vin.setQuantite(Integer.valueOf(quantite.trim()));
+            if (quantite != null && !quantite.isEmpty()) {
+                vin.setQuantite(Integer.parseInt(quantite.trim()));
             }
 
             vinList.add(vin);

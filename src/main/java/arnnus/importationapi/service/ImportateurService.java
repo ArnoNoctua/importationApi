@@ -4,6 +4,7 @@ import arnnus.importationapi.domain.Importateur;
 import arnnus.importationapi.domain.VinList;
 import arnnus.importationapi.repo.ImportateurRepo;
 import arnnus.importationapi.repo.VinRepo;
+import dtos.VinListDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static arnnus.importationapi.constant.Constant.PHOTO_DIRECTORY;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -33,10 +35,24 @@ public class ImportateurService {
     private final ImportateurRepo importateurRepo; //Injection de dépendances
     private final VinRepo vinListRepo;
 
-    public List<VinList> getVinListForImportateur(String id) {
+    public VinListDto toDto(VinList vinList) {
+        return VinListDto.builder()
+                .id(vinList.getImportateurId())
+                .importateurId(vinList.getImportateurId())
+                .nom(vinList.getNom())
+                .millesime(vinList.getMillesime())
+                .pays(vinList.getPays())
+                .region(vinList.getRegion())
+                .prix(vinList.getPrix())
+                .quantite(vinList.getQuantite())
+                .importateur(vinList.getImportateur() != null ? vinList.getImportateur().getId() : null)
+                .build();
+    }
+
+    public List<VinListDto> getVinListForImportateur(String id) {
         List<VinList> vinList = vinListRepo.findAllByImportateurId(id);
         log.info("Fetched VinList for Importateur {}: {}", id, vinList);
-        return vinList;
+        return vinList.stream().map(this::toDto).collect(Collectors.toList());
     }
 
     public Page<Importateur> getAllImportateurs(int page, int size){
